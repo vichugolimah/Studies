@@ -17,6 +17,17 @@ All files presented on Github : [Git](https://github.com/vichugolimah/Studies)
 - On File Path just use  the location to the downloaded file.
 
   No more Settings are needed and the Visuals should work Properly if not already.
+
+  ### Pages
+
+  Big Numbers
+  ![alt text](BigNumbers.png)
+
+and
+
+  ![alt text](FraudScenarios.png)
+
+  Also there's a hidden Page used as tooltip for the Barchart in Big Numbers Page.
 ## North Star
 
 The core objective should be to reduce fraud-related chargeback losses while preserving legitimate approved volume.
