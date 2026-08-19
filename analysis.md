@@ -345,29 +345,7 @@ A practical solution for an acquirer would have five layers:
 
 Initial conceptual architecture:
 
-```text
-Checkout transaction
-        |
-        v
-Gateway/acquirer risk API
-        |
-        v
-Feature engine: amount, velocity, card/device/user/merchant links
-        |
-        v
-Rules + model score
-        |
-        +--> Approve
-        +--> Step-up with 3DS(3-D Secure)
-        +--> Manual review
-        +--> Decline
-        |
-        v
-Outcome store: approvals, declines, chargebacks, refunds, manual decisions
-        |
-        v
-Threshold tuning, merchant monitoring, model retraining
-```
+![alt text](mermaidArch.png)
 
 ## Steps Taken
 
@@ -380,3 +358,6 @@ Threshold tuning, merchant monitoring, model retraining
 7. Created rolling time-window features to simulate what could be known at authorization time.
 8. Tested simple fraud-control rules and measured flagged volume, precision, chargeback recall, and chargeback amount captured.
 9. Translated the strongest findings into actions, recommendations, and an anti-fraud solution design.
+10. Loaded ALL insights in a [PBI Dashboard](case.pbix) with All Measures and refinement needed to get to this Result.
+11.  Most of the Calculations are using Measures ( Measures Table) . Few calculated columns were required to get to the Result and make All visuals responsive with the Filters Available ( Date Range and Amount Range)
+    
