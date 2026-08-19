@@ -8,6 +8,15 @@ Source files used:
   
 All files presented on Github : [Git](https://github.com/vichugolimah/Studies)
 
+## Use PBIX file
+- Download the casecsv.csv file
+- Open the File case.pbix locally 
+- Go to Transform Data (Home Tab)
+- On the Left bar ( Queries). Select **casecsv_f**
+- On the Right Bar ( Query Settings) go to Source--> Right button click -->Edit Settings
+- On File Path just use  the location to the downloaded file.
+
+  No more Settings are needed and the Visuals should work Properly if not already.
 ## North Star
 
 The core objective should be to reduce fraud-related chargeback losses while preserving legitimate approved volume.
