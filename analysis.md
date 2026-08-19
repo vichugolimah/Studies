@@ -4,6 +4,7 @@ Source files used:
 
 - [casecsv.csv](casecsv.csv)
 - [Data_Analyst_I_Case_External.pdf](Data_Analyst_I_Case_External.pdf)
+- 
 
 ## North Star
 
@@ -14,6 +15,8 @@ For this case, the best north-star metric is:
 **Fraud chargeback value rate = fraud-related chargeback amount / total processed amount**
 
 Baseline from the dataset:
+These metrics can be found in the PBI Project Page "Big Numbers"
+![alt text](BigNumbers.png)
 
 - Total transactions: 3,199
 - Total processed amount: 2,456,233.48
@@ -97,7 +100,7 @@ Anti-fraud is the set of data, rules, models, processes, and operational control
 An acquirer uses anti-fraud to:
 
 - Score transactions before or during authorization.
-- Apply step-up authentication such as 3DS when risk is high.
+- Apply step-up authentication such as 3DS(3-D Secure) when risk is high.
 - Decline or manually review risky transactions.
 - Monitor merchants with abnormal chargeback behavior.
 - Create velocity limits for users, devices, cards, and merchants.
@@ -106,7 +109,10 @@ An acquirer uses anti-fraud to:
 
 ## Initial Data Analysis
 
-### Dataset Profile
+### Dataset Profile (Big Numbers)
+These metrics can be found in the PBI Project Page "Big Numbers"
+![alt text](BigNumbers.png)
+
 
 | Metric | Value |
 |---|---:|
@@ -123,10 +129,10 @@ An acquirer uses anti-fraud to:
 
 The data is highly sparse by entity: many merchants/users/cards appear only a few times. Because of that, the strongest initial approach is not a complex model. It is feature engineering around transaction amount, velocity, entity links, and merchant concentration.
 
-### Suspicious Behavior 1: High-Ticket Transactions
+### Suspicious Behavior 1: High-Ticket Transactions(Fraud Evidences Page Left-down Table)
 
 Chargeback rate rises sharply with transaction amount.
-
+![alt text](HighTicketChart.png)
 | Amount band | Transactions | Chargebacks | Chargeback rate |
 |---|---:|---:|---:|
 | <100 | 472 | 14 | 3.0% |
@@ -135,6 +141,10 @@ Chargeback rate rises sharply with transaction amount.
 | 1,000-2,000 | 423 | 75 | 17.7% |
 | >=2,000 | 357 | 120 | 33.6% |
 
+Same Visual was Plotted in "Fraud Scenarios" page
+
+![alt text](Suspicious1.png)
+
 What led to this conclusion:
 
 - Transactions above 2,000 are only 11.2% of volume but represent 63.1% of chargeback value.
@@ -142,7 +152,7 @@ What led to this conclusion:
 
 Action:
 
-- High-ticket CNP transactions should not necessarily be auto-declined, but they should trigger stronger controls such as 3DS, manual review, device/IP checks, or stricter merchant-level thresholds.
+- High-ticket CNP(Card-not-Present) transactions should not necessarily be auto-declined, but they should trigger stronger controls such as manual review, device/IP checks, or stricter merchant-level thresholds.
 
 ### Suspicious Behavior 2: Velocity Bursts
 
@@ -157,6 +167,10 @@ Deployable rolling-rule performance:
 | Device >= 3 tx in 1 hour | 35 | 85.7% | 7.7% | 7.8% |
 | Merchant >= 5 tx in 1 hour | 10 | 80.0% | 2.0% | 1.6% |
 
+Same Visual was Plotted in "Fraud Scenarios" page 
+
+![alt text](Suspicious2.png)
+
 What led to this conclusion:
 
 - Velocity rules have low coverage but very high precision.
@@ -170,13 +184,17 @@ Action:
 
 ### Suspicious Behavior 3: Card Cycling by the Same User or Device
 
-Some users/devices use many different cards in a short period. This is a strong CNP fraud signal.
+Some users/devices use many different cards in a short period. This is a strong CNP(Card-not-Present) fraud signal.
 
 | Rule | Flagged tx | Precision | Chargeback tx recall | Chargeback amount captured |
 |---|---:|---:|---:|---:|
 | User >= 3 cards in 24 hours | 99 | 82.8% | 21.0% | 22.1% |
 | Device >= 3 cards in 24 hours | 84 | 82.1% | 17.6% | 19.1% |
 | Card >= 2 users in 24 hours | 13 | 76.9% | 2.6% | 3.2% |
+
+Same Visual was Plotted in "Fraud Scenarios" page 
+
+![alt text](Suspicious3.png)
 
 What led to this conclusion:
 
@@ -204,6 +222,10 @@ Some merchants have extreme chargeback rates and large chargeback amounts.
 | 91972 | 14 | 11 | 78.6% | 35,528.44 |
 | 73271 | 10 | 10 | 100.0% | 14,577.57 |
 
+Same Visual was Plotted in "Fraud Scenarios" page 
+
+![alt text](Suspicious4.png)
+
 What led to this conclusion:
 
 - These merchants have much higher chargeback rates than the 12.2% baseline.
@@ -216,6 +238,9 @@ Action:
 - Consider rolling reserves, delayed settlement, lower limits, or termination depending on investigation results.
 
 ### Suspicious Behavior 5: Missing Device ID Is Not Enough Alone
+Infos Plotted in "Big Numbers" page 
+
+![alt text](Suspicious5.png)
 
 Missing device ID appears in 25.9% of transactions, but its chargeback rate is 8.1%, below the overall 12.2% baseline.
 
@@ -227,7 +252,7 @@ What led to this conclusion:
 Action:
 
 - Do not use missing device ID as a standalone decline rule.
-- Instead, treat it as a data-quality issue and combine it with amount, velocity, merchant risk, IP, and authentication data.
+- Instead, treat it as a data-quality issue and combine it with amount, velocity, merchant risk, IP,3DS(3-D Secure) and authentication data.
 
 ## Initial Rule Strategy
 
@@ -245,7 +270,7 @@ Suggested interpretation:
 - Use velocity/card-cycling rules as stronger fraud indicators because their precision is above 80% in this dataset.
 - Use a tiered decision engine:
   - Low risk: approve.
-  - Medium risk: 3DS or friction step-up.
+  - Medium risk: 3DS(3-D Secure)(3-D Secure) or friction step-up.
   - High risk: manual review or decline.
   - Merchant risk: settlement hold, reserve, or enhanced monitoring.
 
@@ -261,7 +286,7 @@ To broaden the analysis beyond the spreadsheet, request data in these categories
 | Billing and shipping address | Compare distance, mismatch, repeated addresses, reshipping patterns. |
 | BIN/issuer/card country | Identify risky issuers, prepaid cards, foreign card mismatch. |
 | Authorization response, CVV, AVS | Understand issuer-side risk and authentication quality. |
-| 3DS data | Separate authenticated and unauthenticated CNP traffic. |
+| 3DS(3-D Secure) data | Separate authenticated and unauthenticated CNP(Card-not-Present) traffic. |
 | Product/SKU/category | Fraud often clusters in high-resale-value goods. |
 | Merchant category, onboarding/KYC | Detect risky business models or bad merchants. |
 | Refund/cancellation data | Distinguish merchant service issues from fraud disputes. |
@@ -275,7 +300,7 @@ Immediate measures:
 
 - Add velocity rules for user, card, device, and merchant activity.
 - Add card-cycling rules for users/devices using multiple cards in 24 hours.
-- Apply step-up authentication or manual review to high-ticket CNP transactions.
+- Apply step-up authentication or manual review to high-ticket CNP(Card-not-Present) transactions.
 - Create a merchant watchlist for merchants with high chargeback rates and high chargeback value.
 - Do not decline solely because `device_id` is missing; improve data capture instead.
 
@@ -291,7 +316,7 @@ Strategic measures:
 
 - Move from static rules to a risk-score decision engine.
 - Add supervised ML once more features and a longer historical window are available.
-- Use network intelligence, issuer response data, 3DS outcomes, device intelligence, and behavioral data.
+- Use network intelligence, issuer response data, 3DS(3-D Secure) outcomes, device intelligence, and behavioral data.
 - Separate transaction-level fraud risk from merchant-level risk.
 
 ## Proposed Anti-Fraud Solution
@@ -304,7 +329,7 @@ A practical solution for an acquirer would have five layers:
 
 2. Feature engine
 
-   Compute real-time features such as amount percentile, transaction velocity, distinct cards per user/device, merchant chargeback rate, IP distance, device reputation, and 3DS outcome.
+   Compute real-time features such as amount percentile, transaction velocity, distinct cards per user/device, merchant chargeback rate, IP distance, device reputation, and 3DS(3-D Secure) outcome.
 
 3. Risk decision engine
 
@@ -333,7 +358,7 @@ Feature engine: amount, velocity, card/device/user/merchant links
 Rules + model score
         |
         +--> Approve
-        +--> Step-up with 3DS
+        +--> Step-up with 3DS(3-D Secure)
         +--> Manual review
         +--> Decline
         |
@@ -355,13 +380,3 @@ Threshold tuning, merchant monitoring, model retraining
 7. Created rolling time-window features to simulate what could be known at authorization time.
 8. Tested simple fraud-control rules and measured flagged volume, precision, chargeback recall, and chargeback amount captured.
 9. Translated the strongest findings into actions, recommendations, and an anti-fraud solution design.
-
-## Presentation Direction
-
-For the final case presentation, use this storyline:
-
-1. Start with the acquiring problem: CNP fraud becomes chargeback losses, and acquirers must protect both payment volume and merchant quality.
-2. Show the baseline: 12.2% chargeback rate and 23.1% chargeback value rate.
-3. Show the main fraud patterns: high amount, velocity bursts, card cycling, and risky merchants.
-4. Explain what actions you would take: step-up, review, limits, merchant monitoring, reserves, and data-quality improvements.
-5. End with the anti-fraud solution: real-time risk scoring plus merchant monitoring and feedback loops.
