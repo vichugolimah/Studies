@@ -23,11 +23,10 @@ All files presented on Github : [Git](https://github.com/vichugolimah/Studies)
   Big Numbers
   ![alt text](BigNumbers.png)
 
-and
-
+  Fraud Scenarios
   ![alt text](FraudScenarios.png)
 
-  Also there's a hidden Page used as tooltip for the Barchart in Big Numbers Page.
+  Also there's a hidden Page used as tooltip for the Bar chart in Big Numbers Page.
 ## North Star
 
 The core objective should be to reduce fraud-related chargeback losses while preserving legitimate approved volume.
