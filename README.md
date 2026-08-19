@@ -6,7 +6,7 @@ Source files used:
 - [Data_Analyst_I_Case_External.pdf](Data_Analyst_I_Case_External.pdf)
 - [case.pbix](case.pbix)
   
-All files presented on Github :
+All files presented on Github : [Git](https://github.com/vichugolimah/Studies)
 
 ## North Star
 
